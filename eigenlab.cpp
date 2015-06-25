@@ -36,3 +36,25 @@ void eigenToMxArray(const Eigen::MatrixXd& in, mxArray* out, int m, int n) {
     mxSetM(out, m);
     mxSetN(out, n);
 }
+
+void mxArrayToEigen(const mxArray* in, Eigen::MatrixXd& out, int m, int n) {
+    if (mxGetM(in) != m) {
+        std::cout << "Number of rows in mxArray does not match param 'm'" << std::endl;
+        return;
+    }
+    if (mxGetN(in) != n) {
+        std::cout << "Number of columns in mxArray does not match param 'n'" << std::endl;
+        return;
+    }
+
+    double *mlArray = mxGetPr(in);
+    out.resize(m, n);
+    int offset = 0;
+
+    for (int i = 0; i < n; i++) {
+        offset = i * m;
+        for (int j = 0; j < m; j++) {
+            out(j, i) = mlArray[offset+j];
+        }
+    }
+}
